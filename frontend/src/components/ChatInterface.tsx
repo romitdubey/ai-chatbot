@@ -17,7 +17,7 @@ const ChatInterface: React.FC = () => {
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-xl shadow-lg overflow-hidden">
+    <div className="flex flex-col bg-white rounded-xl shadow-lg overflow-hidden max-w-md w-full mx-auto">
       {/* Chat header */}
       <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-700 to-purple-600 text-white">
         <div className="flex items-center">
