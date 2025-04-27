@@ -54,7 +54,7 @@ export const getBotResponse = (message: string, history: ChatMessage[]): string 
 };
 
 export const formatJobListings = (jobs: JobListing[]): string => {
-  return jobs.map(job => `${job.title} at ${job.company} (${job.location})`).join('\n');
+  return jobs.map(job => `${job.jobTitle} at ${job.organizationName} (${job.jobLocation.join(', ')})`).join('\n');
 };
 
 export const detectBias = (message: string): boolean => {

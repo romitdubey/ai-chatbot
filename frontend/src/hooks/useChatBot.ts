@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ChatMessage } from '../types';
-import { createChatMessage, getBotResponse, detectBias, getRandomResponseTime } from '../utils/helpers';
+import { createChatMessage, detectBias, getRandomResponseTime } from '../utils/helpers';
 import { sampleResponses } from '../data/mockData';
 
 export const useChatBot = () => {
@@ -40,20 +40,41 @@ export const useChatBot = () => {
       return;
     }
     
-    // Generate bot response with some delay to simulate thinking
-    setTimeout(() => {
-      const botResponse = getBotResponse(content, messages);
-      const botMessage = createChatMessage(botResponse, 'assistant');
-      setMessages(prevMessages => [...prevMessages, botMessage]);
-      setIsTyping(false);
+    // Fetch bot response with delay to simulate thinking
+    setTimeout(async () => {
+      try {
+        const response = await fetch('http://localhost:5000/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: content,
+            history: conversation,  // You can send context for better answers
+          }),
+        });
+
+        const data = await response.json();
+
+        const botMessage = createChatMessage(data.reply, 'assistant');
+        setMessages(prevMessages => [...prevMessages, botMessage]);
+      } catch (error) {
+        console.error('Error fetching bot response:', error);
+        const fallbackMessage = createChatMessage('Sorry, I can`t help', 'assistant');
+        setMessages(prevMessages => [...prevMessages, fallbackMessage]);
+      } finally {
+        setIsTyping(false);
+      }
     }, getRandomResponseTime());
-  }, [messages]);
+  }, [conversation]);
 
   const clearChat = useCallback(() => {
     setMessages([]);
     setConversation([]);
     // Re-initialize with welcome message
     const welcomeMessage = createChatMessage(sampleResponses.greeting, 'assistant');
+    fetch('http://localhost:5000/reset', {
+      method: 'POST'});
     setMessages([welcomeMessage]);
   }, []);
 

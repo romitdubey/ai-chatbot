@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
               <a href="#" className="text-gray-500 hover:text-gray-700 transition-colors">
                 <Github size={20} />
               </a>
-              <a href="https://www.jobsforher.com/" className="text-gray-500 hover:text-gray-700 transition-colors">
+              <a href="#" className="text-gray-500 hover:text-gray-700 transition-colors">
                 <ExternalLink size={20} />
               </a>
             </div>
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-xs text-gray-500 mb-2 md:mb-0">
-              © 2025 JobsForHer Foundation. All rights reserved.
+              © 2025 Asha AI. All rights reserved.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-xs text-gray-500 hover:text-gray-700 transition-colors">Privacy Policy</a>

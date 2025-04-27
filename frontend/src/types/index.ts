@@ -7,14 +7,21 @@ export interface ChatMessage {
 
 export interface JobListing {
   id: string;
-  title: string;
-  company: string;
-  location: string;
-  type: string;
-  description: string;
-  skills: string[];
-  postedDate: string;
-  url: string;
+  jobId: string;
+  jobTitle: string;
+  jobLocation: string[];
+  requiredSkills: string[];
+  minimumRequiredExperienceInYears: number;
+  maximumRequiredExperienceInYears: number;
+  numberOfVacancies: number;
+  industry: string;
+  status: string;
+  region: string;
+  currency: string;
+  jobDescription: string;
+  organizationName: string;
+  organizationLogoUrl: string;
+  isConfidential?: boolean;
 }
 
 export interface Event {

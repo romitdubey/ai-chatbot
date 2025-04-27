@@ -1,9 +1,30 @@
-import React from 'react';
-import { jobListings } from '../data/mockData';
-import JobCard from '../components/JobCard';
+import React, { useState, useEffect } from 'react';
 import { Search, Briefcase } from 'lucide-react';
+import JobCard from '../components/JobCard';
+import { JobListing } from '../types';
+import jobData from '../data/jobs.json';
 
 const JobsPage: React.FC = () => {
+  const [jobs, setJobs] = useState<JobListing[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [jobsPerPage] = useState<number>(6);
+
+  useEffect(() => {
+    // Ensure jobData is treated as JobListing[]
+    setJobs(jobData as JobListing[]);
+  }, []);
+
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
       <div className="p-6 bg-gradient-to-r from-purple-700 to-purple-600 text-white">
@@ -15,7 +36,6 @@ const JobsPage: React.FC = () => {
       </div>
       
       <div className="p-6">
-        {/* Search and filter */}
         <div className="mb-6">
           <div className="relative">
             <input
@@ -25,85 +45,53 @@ const JobsPage: React.FC = () => {
             />
             <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
           </div>
-          
-          <div className="flex flex-wrap gap-2 mt-3">
-            <div className="relative">
-              <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-8 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
-                <option>All Job Types</option>
-                <option>Full-time</option>
-                <option>Part-time</option>
-                <option>Contract</option>
-                <option>Remote</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
-            </div>
-            
-            <div className="relative">
-              <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-8 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
-                <option>All Locations</option>
-                <option>Remote</option>
-                <option>Bangalore</option>
-                <option>Mumbai</option>
-                <option>Delhi NCR</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
-            </div>
-            
-            <div className="relative">
-              <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-8 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
-                <option>Experience Level</option>
-                <option>Entry Level</option>
-                <option>Mid Level</option>
-                <option>Senior Level</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
-            </div>
-            
-            <button className="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors">
-              Filter
-            </button>
-          </div>
         </div>
         
-        {/* Job listings */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {jobListings.map(job => (
-            <JobCard key={job.id} job={job} />
+          {currentJobs.map(job => (
+            <JobCard key={job.jobId} job={job} />
           ))}
         </div>
         
-        {/* Pagination */}
         <div className="flex justify-between items-center mt-6 pt-6 border-t border-gray-200">
           <div className="text-sm text-gray-500">
-            Showing <span className="font-medium">1-{jobListings.length}</span> of <span className="font-medium">42</span> jobs
+            Showing <span className="font-medium">{indexOfFirstJob + 1}-{Math.min(indexOfLastJob, jobs.length)}</span> of <span className="font-medium">{jobs.length}</span> jobs
           </div>
           
           <div className="flex space-x-1">
-            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+            <button 
+              className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
               Previous
             </button>
-            <button className="px-3 py-1 bg-purple-100 text-purple-700 border border-purple-300 rounded-md text-sm font-medium">
-              1
-            </button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm">
-              2
-            </button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm">
-              3
-            </button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, index) => {
+              const page = Math.max(1, currentPage - 2) + index;
+              if (page > totalPages) return null;
+              return (
+          <button
+            key={page}
+            className={`px-3 py-1 border border-gray-300 rounded-md text-sm ${currentPage === page ? 'bg-purple-100 text-purple-700' : ''}`}
+            onClick={() => handlePageChange(page)}
+          >
+            {page}
+          </button>
+              );
+            })}
+            {currentPage + 2 < totalPages && (
+              <button
+          className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+          onClick={() => handlePageChange(currentPage + 1)}
+              >
+          ...
+              </button>
+            )}
+            <button
+              className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
               Next
             </button>
           </div>
